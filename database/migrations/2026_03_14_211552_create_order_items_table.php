@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('book_id')->constrained()->onDelete('cascade');
-            $table->foreignId('seller_id')->constrained('user_id')->onDelete('cascade');
+            $table->foreignId('seller_id')->constrained('users')->onDelete('cascade');
             $table->unsignedInteger('quantity');
             $table->decimal('price', 10, 2);
             $table->enum('status',['pending', 'shipped', 'delivered'])->default('pending');
