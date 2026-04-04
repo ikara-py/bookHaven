@@ -15,7 +15,7 @@ class Wishlist extends Model
     }
 
     public function books(){
-        return $this->belongsToMany(Book::class, 'book_whishlist');
+        return $this->belongsToMany(Book::class, 'book_wishlists');
     }
     
 }
