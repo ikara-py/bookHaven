@@ -14,7 +14,6 @@ class OrderController extends Controller
 
     public function index(Request $request){
         $orders = $this->orderService->getUserOrders($request->user()->id);
-        //dd(orders);
         return view('orders.index', compact('orders'));
     }
 
@@ -28,9 +27,9 @@ class OrderController extends Controller
             abort(403);
         }
 
-        dd($order->load('items.book', 'payment'));
+        $order->load('items.book', 'payment');
 
-        // return view('order.show', );
+        return view('orders.show', compact('order'));
     }
 
 

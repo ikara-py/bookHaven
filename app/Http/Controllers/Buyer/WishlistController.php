@@ -12,12 +12,17 @@ class WishlistController extends Controller
 
     public function index(Request $request){
         $wishlist = $this->wishlistService->get($request->user()->id);
-        dd($wishlist);
+        return view('wishlist.index', compact('wishlist'));
     }
 
     public function toggle(Request $request){
         $request->validate(['book_id' => 'required|exists:books,id']);
         $result = $this->wishlistService->toggle($request->user()->id, $request->book_id);
+        
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'action' => $result]);
+        }
+        
         return back()->with('success', "Book {$result} from wishlist");
     }
 }
