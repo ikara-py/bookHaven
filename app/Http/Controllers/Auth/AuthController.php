@@ -12,6 +12,14 @@ class AuthController extends Controller
 {
     public function __construct(private AuthService $authService){}
 
+    public function showLogin() {
+        return view('auth.login');
+    }
+
+    public function showRegister() {
+        return view('auth.register');
+    }
+
     public function register(RegisterRequest $request){
         $this->authService->register($request->validated());
         return redirect()->route('login')->with('success', 'Account created');
@@ -25,6 +33,17 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Invalid credentials.'])->withInput();
         }
         $request->session()->regenerate();
+
+        $user = $request->user();
+        
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->role === 'seller') {
+            return redirect()->route('seller.dashboard');
+        }
+
         return redirect()->intended(route('books.index'));
     }
 
