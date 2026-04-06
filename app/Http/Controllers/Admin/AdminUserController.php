@@ -12,12 +12,12 @@ class AdminUserController extends Controller
 
     public function dashboard(){
         $status = $this->adminService->stats();
-        dd($status);
+        return view('admin.dashboard', compact('status'));
     }
 
     public function index(){
         $users = $this->adminService->allUsers();
-        dd($users);
+        return view('admin.users.index', compact('users'));
     }
 
     public function updateStatus(Request $request, $userId){
@@ -32,6 +32,11 @@ class AdminUserController extends Controller
     public function updateRole(Request $request, $userId){
         $request->validate(['role' => 'required|in:buyer,seller,buyer_seller,admin']);
         $this->adminService->updateRole($userId, $request->role);
-        return back()->with('success', 'seller approved.');
+        return back()->with('success', 'User role updated.');
+    }
+
+    public function approveSeller($userId){
+        $this->adminService->approveSeller($userId);
+        return back()->with('success', 'Seller profile approved successfully.');
     }
 }

@@ -12,9 +12,9 @@ class SellerOrderController extends Controller
     public function __construct(private OrderService $orderService){}
 
     public function index(Request $request){
-        $item = $this->orderService->getSellerOrders($request->user()->id);
+        $items = $this->orderService->getSellerOrders($request->user()->id);
 
-        dd($item);
+        return view('seller.orders.index', compact('items'));
     }
 
     public function updateStatus(Request $request, OrderItem $item){

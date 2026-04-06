@@ -16,7 +16,7 @@ class AdminBookController extends Controller
         $books = Book::with('seller', 'category', 'author')
                     ->paginate(20);
 
-        dd($books);
+        return view('admin.books.index', compact('books'));
     }
 
 

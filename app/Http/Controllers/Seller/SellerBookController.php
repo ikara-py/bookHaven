@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Book\StoreBookRequest;
 use App\Http\Requests\Book\UpdateBookRequest;
 use App\Models\Book;
+use App\Models\Author;
+use App\Models\Category;
 use App\Services\BookService;
 use Illuminate\Http\Request;
 
@@ -17,7 +19,13 @@ class SellerBookController extends Controller
         $books = Book::where('seller_id', $request->user()->id)
                     ->with('category', 'author')
                     ->paginate(20);
-        dd($books);
+        return view('seller.books.index', compact('books'));
+    }
+
+    public function create() {
+        $authors = Author::all();
+        $categories = Category::all();
+        return view('seller.books.create', compact('authors', 'categories'));
     }
 
 
@@ -33,7 +41,10 @@ class SellerBookController extends Controller
             abort(403);
         }
 
-        dd($book);
+        $authors = Author::all();
+        $categories = Category::all();
+
+        return view('seller.books.edit', compact('book', 'authors', 'categories'));
     }
 
     public function update(UpdateBookRequest $request, Book $book ){

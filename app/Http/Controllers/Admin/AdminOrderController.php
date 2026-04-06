@@ -14,7 +14,7 @@ class AdminOrderController extends Controller
     public function index(){
         $orders = $this->adminService->allOrders();
 
-        dd($orders);
+        return view('admin.orders.index', compact('orders'));
     }
 
     public function updateStatus(Request $request, Order $order){
