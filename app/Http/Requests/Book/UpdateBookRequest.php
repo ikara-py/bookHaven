@@ -12,7 +12,7 @@ class UpdateBookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,12 +24,14 @@ class UpdateBookRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|string|max:255',
+            'isbn' => 'sometimes|nullable|string|unique:books,isbn,' . ($this->book->id ?? $this->book),
             'description' => 'sometimes|nullable|string',
             'price' => 'sometimes|numeric|min:0',
             'original_price' => 'sometimes|nullable|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
             'category_id' => 'sometimes|exists:categories,id',
-            'author_id' => 'sometimes|exists:authors,id',
+            'author_id' => 'required_without:new_author_name|nullable|sometimes|exists:authors,id',
+            'new_author_name' => 'sometimes|nullable|string|max:255',
             'type' => 'sometimes|in:physical,digital',
             'language' => 'sometimes|nullable|string|max:10',
             'publication_year' => 'sometimes|nullable|integer|min:1000|max:2099',

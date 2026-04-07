@@ -12,7 +12,7 @@ class PlaceOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +23,8 @@ class PlaceOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shipping_address' => 'required|stringmin:10',
-            'payment_method' => 'required|in:card|paypal|cod',
+            'shipping_address' => 'required|string|min:10',
+            'payment_method' => 'required|in:card,paypal,cod',
         ];
     }
 }
