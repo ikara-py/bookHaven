@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Book;
+use App\Models\Author;
 use Illuminate\Support\Facades\Storage;
 
 class BookService{
@@ -36,6 +37,11 @@ class BookService{
     }
 
     public function create($data, $sellerId){
+        if(!empty($data['new_author_name'])){
+            $author = Author::create(['name' => $data['new_author_name']]);
+            $data['author_id'] = $author->id;
+        }
+
         if(isset($data['cover']) && $data['cover'] instanceof \Illuminate\Http\UploadedFile){
             $data['cover'] = $data['cover']->store('books/covers', 'public');   
         }
@@ -45,6 +51,11 @@ class BookService{
 
     public function update(Book $book, array $data): Book
     {
+        if(!empty($data['new_author_name'])){
+            $author = Author::create(['name' => $data['new_author_name']]);
+            $data['author_id'] = $author->id;
+        }
+
         if (isset($data['cover']) && $data['cover'] instanceof \Illuminate\Http\UploadedFile) {
             if ($book->cover) Storage::disk('public')->delete($book->cover);
             $data['cover'] = $data['cover']->store('books/covers', 'public');
