@@ -5,7 +5,7 @@ use App\Models\Wishlist;
 
 class WishlistService{
     public function get($userId){
-        return Wishlist::with('books.authors')->where('user_id', $userId)->firstOrFail();
+        return Wishlist::with(['books.author', 'books.category'])->where('user_id', $userId)->firstOrFail();
     }
 
     public function toggle($userId, $bookId){
