@@ -12,7 +12,7 @@ class StoreBookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,13 +23,15 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'title' => 'sometimes|string|max:255',
+            'isbn' => 'sometimes|nullable|string|unique:books,isbn,' . ($this->book->id ?? $this->book),
+            'description' => 'sometimes|nullable|string',
             'price' => 'required|numeric|min:0',
-            'origina_price' => 'nullable|numeric:min:0',
+            'original_price' => 'nullable|numeric|min:0',
             'stock' =>'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
-            'author_id' => 'required|exists:authors,id',
+            'author_id' => 'required_without:new_author_name|nullable|exists:authors,id',
+            'new_author_name' => 'nullable|string|max:255',
             'type' => 'required|in:physical,digital',
             'language' => 'nullable|string|max:10',
             'publication_year' =>'nullable|integer|min:1000|max:2099',
