@@ -1,9 +1,10 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Buyer\{BookController, CartController, OrderController, WishlistController};
+use App\Http\Controllers\Buyer\{AuthorController, BookController, CartController, CategoryController, OrderController, WishlistController};
 use App\Http\Controllers\Seller\{SellerBookController, SellerOrderController};
 use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController};
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', fn() => redirect()->route('books.index'))->name('home');
  
@@ -16,13 +17,19 @@ Route::post('/login',[AuthController::class, 'login']);
 
 Route::get('/books',[BookController::class, 'index'])->name('books.index');
 Route::get('/books/{book}',[BookController::class, 'show'])->name('books.show');
+
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('/authors', [AuthorController::class, 'index'])->name('authors.index');
  
 
 Route::middleware('auth')->group(function () {
  
     Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 
-    Route::middleware('role:buyer')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::middleware('role:buyer,seller')->group(function () {
         Route::get('/cart',[CartController::class, 'index'])->name('cart.index');
         Route::post('/cart/items',[CartController::class, 'addItem'])->name('cart.add');
         Route::delete('/cart/items/{itemId}',[CartController::class, 'removeItem'])->name('cart.remove');
@@ -38,7 +45,8 @@ Route::middleware('auth')->group(function () {
  
 
     Route::middleware('role:seller')->prefix('seller')->name('seller.')->group(function () {
-        Route::resource('books', SellerBookController::class);
+        Route::get('dashboard', [\App\Http\Controllers\Seller\SellerDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('books', SellerBookController::class)->middleware('seller_approved');
         Route::get('orders',[SellerOrderController::class, 'index'])->name('orders.index');
         Route::patch('orders/{item}/status',[SellerOrderController::class, 'updateStatus'])->name('orders.status');
     });
@@ -48,9 +56,9 @@ Route::middleware('auth')->group(function () {
         Route::get('dashboard',[AdminUserController::class, 'dashboard'])->name('dashboard');
  
         Route::get('users',[AdminUserController::class, 'index'])->name('users.index');
-        Route::patch('users/{id}/status',[AdminUserController::class, 'updateStatus'])->name('users.status');
-        Route::patch('users/{id}/role',[AdminUserController::class, 'updateRole'])->name('users.role');
-        Route::post('users/{id}/approve',[AdminUserController::class, 'approveSeller'])->name('users.approve');
+        Route::patch('users/{id}/status',[AdminUserController::class, 'updateStatus'])->name('users.updateStatus');
+        Route::patch('users/{id}/role',[AdminUserController::class, 'updateRole'])->name('users.updateRole');
+        Route::patch('users/{id}/approve',[AdminUserController::class, 'approveSeller'])->name('users.approveSeller');
  
         Route::resource('books',AdminBookController::class)->only(['index','update','destroy']);
         Route::get('orders',[AdminOrderController::class, 'index'])->name('orders.index');
