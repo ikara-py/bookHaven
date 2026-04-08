@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('author_id')->constrained()->onDelete('cascade');
             $table->string('title');
+            $table->string('isbn')->unique()->nullable();
             $table->string('cover')->nullable();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
@@ -29,7 +30,8 @@ return new class extends Migration
             $table->float('rating')->default(0);
             $table->unsignedInteger('views')->default(0);
             $table->unsignedInteger('downloads')->default(0);
-            $table->enum('type',['physical', 'digital'])->default('physical');
+            $table->enum('type', ['physical', 'digital'])->default('physical');
+            $table->enum('status', ['active', 'inactive', 'sold', 'rejected'])->default('active');
             $table->timestamps();
         });
     }
