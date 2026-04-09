@@ -22,7 +22,7 @@ class AdminUserController extends Controller
 
     public function updateStatus(Request $request, $userId){
         $request->validate([
-            'status' => 'required|in:active,suspended'
+            'status' => ['required', 'in:active,suspended']
         ]);
 
         $this->adminService->updateStatus($userId, $request->status);
@@ -30,7 +30,7 @@ class AdminUserController extends Controller
     }
 
     public function updateRole(Request $request, $userId){
-        $request->validate(['role' => 'required|in:buyer,seller,buyer_seller,admin']);
+        $request->validate(['role' => ['required', 'in:buyer,seller,buyer_seller,admin']]);
         $this->adminService->updateRole($userId, $request->role);
         return back()->with('success', 'User role updated.');
     }
