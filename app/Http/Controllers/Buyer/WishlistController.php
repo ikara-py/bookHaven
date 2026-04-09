@@ -16,7 +16,7 @@ class WishlistController extends Controller
     }
 
     public function toggle(Request $request){
-        $request->validate(['book_id' => 'required|exists:books,id']);
+        $request->validate(['book_id' => ['required', 'exists:books,id']]);
         $result = $this->wishlistService->toggle($request->user()->id, $request->book_id);
         
         if ($request->expectsJson()) {
