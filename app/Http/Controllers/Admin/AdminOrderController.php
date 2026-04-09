@@ -19,7 +19,7 @@ class AdminOrderController extends Controller
 
     public function updateStatus(Request $request, Order $order){
         $request->validate([
-            'status' => 'required|in:pending,paid,cancelled,completed'
+            'status' => ['required', 'in:pending,paid,cancelled,completed']
         ]);
         
         $this->adminService->updateOrderStatus($order, $request->status);
