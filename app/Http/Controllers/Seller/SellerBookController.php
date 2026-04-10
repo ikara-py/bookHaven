@@ -9,11 +9,15 @@ use App\Models\Book;
 use App\Models\Author;
 use App\Models\Category;
 use App\Services\BookService;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
 class SellerBookController extends Controller
 {
-    public function __construct(private BookService $bookService){}
+    public function __construct(
+        private BookService $bookService,
+        private CategoryService $categoryService
+    ){}
 
     public function index(Request $request){
         $books = Book::where('seller_id', $request->user()->id)
@@ -24,7 +28,7 @@ class SellerBookController extends Controller
 
     public function create() {
         $authors = Author::all();
-        $categories = Category::all();
+        $categories = $this->categoryService->all();
         return view('seller.books.create', compact('authors', 'categories'));
     }
 
@@ -42,7 +46,7 @@ class SellerBookController extends Controller
         }
 
         $authors = Author::all();
-        $categories = Category::all();
+        $categories = $this->categoryService->all();
 
         return view('seller.books.edit', compact('book', 'authors', 'categories'));
     }

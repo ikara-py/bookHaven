@@ -26,8 +26,14 @@ class AuthController extends Controller
     }
 
     public function login(LoginRequest $request){
-        $loggedIn = $this->authService->login($request->only('email', 'password'),
-        $request->boolean('remember'));
+        try {
+            $loggedIn = $this->authService->login(
+                $request->only('email', 'password'),
+                $request->boolean('remember')
+            );
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage())->withInput();
+        }
 
         if(!$loggedIn){
             return back()->withErrors(['email' => 'Invalid credentials.'])->withInput();

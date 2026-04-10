@@ -23,10 +23,12 @@ class SellerOrderController extends Controller
         }
 
         $request->validate([
-            'status' => 'required|in:pending,shipped,delivered'
+            'status' => ['required', 'in:pending,shipped,delivered']
         ]);
 
         $item->update(['status' => $request->status]);
+        $this->orderService->syncOrderStatus($item->order_id);
+        
         return back()->with('success', 'Order item status updated');
     }
 }

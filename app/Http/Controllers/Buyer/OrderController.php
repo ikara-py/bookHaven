@@ -32,5 +32,19 @@ class OrderController extends Controller
         return view('orders.show', compact('order'));
     }
 
+    public function cancel(Request $request, Order $order)
+    {
+        if ($order->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        try {
+            $this->orderService->cancelOrder($order);
+            return redirect()->route('orders.show', $order)->with('success', 'Order cancelled successfully. Any payments have been refunded to your card.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
 
 }
