@@ -23,8 +23,8 @@ class CartItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'book_id' => 'required|exists:books,id',
-            'quantity' => 'required|integer|min:1|max:100'
+            'book_id' => ['required', 'exists:books,id'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:100']
         ];
     }
 }
