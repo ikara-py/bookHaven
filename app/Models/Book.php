@@ -48,6 +48,30 @@ class Book extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function reviews(){
+        return $this->hasMany(Review::class);
+    }
+
+    public function averageRating(){
+        return $this->reviews()->avg('rating') ?: 0;
+    }
+
+    public function reviewsCount(){
+        return $this->reviews()->count();
+    }
+
+    public function isPurchasedBy($userId)
+    {
+        if (!$userId) return false;
+
+        return $this->orderItems()
+            ->whereHas('order', function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                      ->where('status', 'completed');
+            })
+            ->exists();
+    }
+
     public function getCoverUrlAttribute()
     {
         if (!$this->cover) {
