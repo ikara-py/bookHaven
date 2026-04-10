@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
+use JonPurvis\Squeaky\Rules\Clean;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,8 +24,11 @@ class PlaceOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shipping_address' => 'required|string|min:10',
-            'payment_method' => 'required|in:card,paypal,cod',
+            'shipping_address' => ['required', 'string', 'min:10', new Clean()],
+            'payment_method' => ['required', 'in:card,paypal,cod'],
+            'card_number' => ['required_if:payment_method,card', 'nullable', 'string'],
+            'expiry_date' => ['required_if:payment_method,card', 'nullable', 'string'],
+            'cvv' => ['required_if:payment_method,card', 'nullable', 'string'],
         ];
     }
 }
