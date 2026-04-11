@@ -6,9 +6,12 @@ use App\Models\User;
 use App\Models\SellerProfile;
 use App\Models\Order;
 use App\Models\Book;
+use App\Services\OrderService;
 
 class AdminService
 {
+    public function __construct(private OrderService $orderService) {}
+
     public function allUsers()
     {
         return User::with('sellerProfile')->latest()->paginate(30);
@@ -30,7 +33,15 @@ class AdminService
 
     public function approveSeller($userId): SellerProfile
     {
-        $profile = SellerProfile::where('user_id', $userId)->firstOrFail();
+        $user = User::findOrFail($userId);
+        $profile = SellerProfile::firstOrCreate(
+            ['user_id' => $userId],
+            [
+                'store_name' => $user->full_name . "'s Boutique",
+                'is_approved' => false
+            ]
+        );
+        
         $profile->update(['is_approved' => true]);
         return $profile;
     }
@@ -55,6 +66,10 @@ class AdminService
 
     public function updateOrderStatus(Order $order, $status)
     {
+        if ($status === 'cancelled') {
+            return $this->orderService->cancelOrder($order);
+        }
+
         $order->update(['status' => $status]);
         return $order->fresh();
     }
