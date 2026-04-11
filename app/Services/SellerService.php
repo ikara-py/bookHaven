@@ -14,9 +14,12 @@ class SellerService
             'total_books' => Book::where('seller_id', $sellerId)->count(),
             'pending_orders' => OrderItem::where('seller_id', $sellerId)
                 ->where('status', 'pending')
+                ->whereHas('book', function($q) {
+                    $q->where('type', '!=', 'digital');
+                })
                 ->count(),
             'total_earnings' => OrderItem::where('seller_id', $sellerId)
-                ->whereIn('status', ['completed', 'shipped'])
+                ->whereIn('status', ['completed', 'shipped', 'delivered'])
                 ->sum(DB::raw('price * quantity')),
             'recent_sales' => OrderItem::with(['book', 'order.user'])
                 ->where('seller_id', $sellerId)
