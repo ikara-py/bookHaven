@@ -17,6 +17,8 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->string('payment_method');
             $table->string('transaction_id')->nullable();
+            $table->string('status')->default('completed');
+            $table->string('card_number')->nullable();
             $table->timestamps();
         });
     }
