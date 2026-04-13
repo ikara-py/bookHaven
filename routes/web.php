@@ -1,9 +1,9 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Buyer\{AuthorController, BookController, CartController, CategoryController, OrderController, WishlistController};
+use App\Http\Controllers\Buyer\{AuthorController, BookController, CartController, CategoryController, OrderController, ReviewController, WishlistController, DownloadController};
 use App\Http\Controllers\Seller\{SellerBookController, SellerOrderController};
-use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController};
+use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController, AdminReviewController, AdminCategoryController};
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', fn() => redirect()->route('books.index'))->name('home');
@@ -38,9 +38,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders',[OrderController::class, 'index'])->name('orders.index');
         Route::post('/orders',[OrderController::class, 'store'])->name('orders.store');
         Route::get('/orders/{order}',[OrderController::class, 'show'])->name('orders.show');
+        Route::patch('/orders/{order}/cancel',[OrderController::class, 'cancel'])->name('orders.cancel');
+        Route::get('/orders/download/{book}', [DownloadController::class, 'download'])->name('orders.download');
  
         Route::get('/wishlist',[WishlistController::class, 'index'])->name('wishlist.index');
         Route::post('/wishlist/toggle',[WishlistController::class, 'toggle'])->name('wishlist.toggle');
+        
+        Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     });
  
 
@@ -60,8 +64,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('users/{id}/role',[AdminUserController::class, 'updateRole'])->name('users.updateRole');
         Route::patch('users/{id}/approve',[AdminUserController::class, 'approveSeller'])->name('users.approveSeller');
  
-        Route::resource('books',AdminBookController::class)->only(['index','update','destroy']);
+        Route::resource('books',AdminBookController::class)->only(['index','edit','update','destroy']);
         Route::get('orders',[AdminOrderController::class, 'index'])->name('orders.index');
         Route::patch('orders/{order}/status',[AdminOrderController::class, 'updateStatus'])->name('orders.status');
+        Route::delete('reviews/{review}',[AdminReviewController::class, 'destroy'])->name('reviews.destroy');
+        Route::resource('categories',AdminCategoryController::class)->except(['create','show']);
     });
 });
