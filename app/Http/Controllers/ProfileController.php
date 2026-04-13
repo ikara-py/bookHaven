@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use JonPurvis\Squeaky\Rules\Clean;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -19,22 +20,22 @@ class ProfileController extends Controller
         $user = $request->user();
 
         $rules = [
-            'full_name' => ['required', 'string', 'max:255'],
+            'full_name' => ['required', 'string', 'max:255', new Clean()],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'phone' => ['nullable', 'string', 'max:20'],
             'city' => ['nullable', 'string', 'max:100'],
             'country' => ['nullable', 'string', 'max:100'],
-            'address' => ['nullable', 'string', 'max:500'],
-            'bio' => ['nullable', 'string', 'max:1000'],
+            'address' => ['nullable', 'string', 'max:500', new Clean()],
+            'bio' => ['nullable', 'string', 'max:1000', new Clean()],
         ];
 
-        if ($request->filled('password')) {
+        if ($request->filled('password') && $request->filled('password_confirmation')) {
             $rules['password'] = ['required', 'confirmed', Password::defaults()];
         }
 
         if ($user->isSeller() && $user->sellerProfile) {
-            $rules['store_name'] = ['required', 'string', 'max:255'];
-            $rules['store_description'] = ['nullable', 'string', 'max:1000'];
+            $rules['store_name'] = ['required', 'string', 'max:255', new Clean()];
+            $rules['store_description'] = ['nullable', 'string', 'max:1000', new Clean()];
         }
 
         $validated = $request->validate($rules);
@@ -49,7 +50,7 @@ class ProfileController extends Controller
             'bio' => $validated['bio'] ?? $user->bio,
         ]);
 
-        if ($request->filled('password')) {
+        if ($request->filled('password') && $request->filled('password_confirmation')) {
             $user->update([
                 'password' => Hash::make($validated['password']),
             ]);
