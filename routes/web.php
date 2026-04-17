@@ -5,8 +5,11 @@ use App\Http\Controllers\Buyer\{AuthorController, BookController, CartController
 use App\Http\Controllers\Seller\{SellerBookController, SellerOrderController};
 use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController, AdminReviewController, AdminCategoryController};
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StripeWebhookController;
 
 Route::get('/', fn() => redirect()->route('books.index'))->name('home');
+
+Route::post('/webhook/stripe', [StripeWebhookController::class, 'handle']);
  
 
 Route::get('/register',[AuthController::class, 'showRegister'])->name('register');
