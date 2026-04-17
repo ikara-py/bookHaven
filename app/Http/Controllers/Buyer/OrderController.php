@@ -7,6 +7,7 @@ use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
+use Exception;
 
 class OrderController extends Controller
 {
@@ -18,8 +19,13 @@ class OrderController extends Controller
     }
 
     public function store(PlaceOrderRequest $request){
-        $order = $this->orderService->placeOrder($request->user()->id, $request->validated());
-        return redirect()->route('orders.show', $order)->with('success', 'Order placed successfully!');
+        $result = $this->orderService->placeOrder($request->user()->id, $request->validated());
+        
+        if ($result['redirect_url']) {
+            return redirect()->away($result['redirect_url']);
+        }
+
+        return redirect()->route('orders.show', $result['order'])->with('success', 'Order placed successfully!');
     }
 
     public function show(Request $request, Order $order){
@@ -41,10 +47,8 @@ class OrderController extends Controller
         try {
             $this->orderService->cancelOrder($order);
             return redirect()->route('orders.show', $order)->with('success', 'Order cancelled successfully. Any payments have been refunded to your card.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
-
-
 }

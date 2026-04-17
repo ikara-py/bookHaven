@@ -25,10 +25,7 @@ class PlaceOrderRequest extends FormRequest
     {
         return [
             'shipping_address' => ['required', 'string', 'min:10', new Clean()],
-            'payment_method' => ['required', 'in:card,paypal,cod'],
-            'card_number' => ['required_if:payment_method,card', 'nullable', 'string'],
-            'expiry_date' => ['required_if:payment_method,card', 'nullable', 'string'],
-            'cvv' => ['required_if:payment_method,card', 'nullable', 'string'],
+            'payment_method' => ['required', 'in:stripe,cod'],
         ];
     }
 }
