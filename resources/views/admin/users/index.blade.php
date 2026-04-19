@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    <div class="bg-(--color-surface) rounded-3xl border border-(--color-border) overflow-hidden shadow-sm">
+    <div class="bg-(--color-surface) rounded-3xl border border-(--color-border) shadow-sm">
         <div class="hidden md:block">
             <table class="w-full text-left border-collapse">
                 <thead>
