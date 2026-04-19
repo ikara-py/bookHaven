@@ -14,6 +14,10 @@ class OrderController extends Controller
     public function __construct(private OrderService $orderService){}
 
     public function index(Request $request){
+        if ($request->user()->isAdmin()) {
+            return redirect()->route('admin.orders.index');
+        }
+
         $orders = $this->orderService->getUserOrders($request->user()->id);
         return view('orders.index', compact('orders'));
     }
