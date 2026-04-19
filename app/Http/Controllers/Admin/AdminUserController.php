@@ -21,6 +21,10 @@ class AdminUserController extends Controller
     }
 
     public function updateStatus(Request $request, $userId){
+        if ($userId == auth()->id()) {
+            return back()->with('error', 'You cannot change your own status.');
+        }
+
         $request->validate([
             'status' => ['required', 'in:active,suspended']
         ]);
@@ -30,6 +34,10 @@ class AdminUserController extends Controller
     }
 
     public function updateRole(Request $request, $userId){
+        if ($userId == auth()->id()) {
+            return back()->with('error', 'You cannot change your own role.');
+        }
+
         $request->validate(['role' => ['required', 'in:buyer,seller,buyer_seller,admin']]);
         $this->adminService->updateRole($userId, $request->role);
         return back()->with('success', 'User role updated.');

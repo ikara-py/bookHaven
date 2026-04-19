@@ -51,7 +51,12 @@
                                         {{ substr($user->full_name, 0, 1) }}
                                     </div>
                                     <div>
-                                        <p class="font-bold text-(--color-text)">{{ $user->full_name }}</p>
+                                        <p class="font-bold text-(--color-text)">
+                                            {{ $user->full_name }}
+                                            @if($user->id === auth()->id())
+                                                <span class="ml-2 text-[9px] font-black uppercase tracking-widest bg-(--color-accent)/20 text-(--color-text) px-1.5 py-0.5 rounded border border-(--color-border)">You</span>
+                                            @endif
+                                        </p>
                                         <p class="text-xs text-(--color-muted) font-medium">{{ $user->email }}</p>
                                     </div>
                                 </div>
@@ -79,45 +84,49 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <div class="relative inline-block text-left">
-                                    <button data-dropdown-toggle="user-dropdown-{{ $user->id }}" class="p-2 hover:bg-(--color-bg) rounded-full transition-all">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-(--color-muted)"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-                                    </button>
-                                    
-                                    <div id="user-dropdown-{{ $user->id }}" data-dropdown class="hidden absolute right-0 mt-2 w-56 bg-(--color-surface) border border-(--color-border) rounded-2xl shadow-xl z-50 overflow-hidden">
-                                        <div class="p-4 border-b border-(--color-border) bg-(--color-bg)/50">
-                                            <p class="text-[10px] font-black uppercase text-(--color-muted) tracking-widest">Update Permissions</p>
-                                        </div>
-                                        <div class="p-4 space-y-4">
-                                            <form action="{{ route('admin.users.updateRole', $user->id) }}" method="POST">
-                                                @csrf @method('PATCH')
-                                                <label class="block text-[10px] font-bold uppercase mb-1.5 opacity-60">System Role</label>
-                                                <select name="role" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-2.5 rounded-xl border border-(--color-border) outline-none appearance-none cursor-pointer">
-                                                    <option value="buyer" {{ $user->role == 'buyer' ? 'selected' : '' }}>Buyer</option>
-                                                    <option value="seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller</option>
-                                                    <option value="buyer_seller" {{ $user->role == 'buyer_seller' ? 'selected' : '' }}>Buyer/Seller</option>
-                                                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                                </select>
-                                            </form>
-                                            
-                                            <form action="{{ route('admin.users.updateStatus', $user->id) }}" method="POST">
-                                                @csrf @method('PATCH')
-                                                <label class="block text-[10px] font-bold uppercase mb-1.5 opacity-60">Account Status</label>
-                                                <select name="status" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-2.5 rounded-xl border border-(--color-border) outline-none appearance-none cursor-pointer">
-                                                    <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Active</option>
-                                                    <option value="suspended" {{ $user->status == 'suspended' ? 'selected' : '' }}>Suspended</option>
-                                                </select>
-                                            </form>
-
-                                            @if(in_array($user->role, ['seller', 'buyer_seller']) && (!$user->sellerProfile || !$user->sellerProfile->is_approved))
-                                                <form action="{{ route('admin.users.approveSeller', $user->id) }}" method="POST" class="pt-2 border-t border-(--color-border)">
+                                @if($user->id !== auth()->id())
+                                    <div class="relative inline-block text-left">
+                                        <button data-dropdown-toggle="user-dropdown-{{ $user->id }}" class="p-2 hover:bg-(--color-bg) rounded-full transition-all">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-(--color-muted)"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                        </button>
+                                        
+                                        <div id="user-dropdown-{{ $user->id }}" data-dropdown class="hidden absolute right-0 mt-2 w-56 bg-(--color-surface) border border-(--color-border) rounded-2xl shadow-xl z-50 overflow-hidden">
+                                            <div class="p-4 border-b border-(--color-border) bg-(--color-bg)/50">
+                                                <p class="text-[10px] font-black uppercase text-(--color-muted) tracking-widest">Update Permissions</p>
+                                            </div>
+                                            <div class="p-4 space-y-4">
+                                                <form action="{{ route('admin.users.updateRole', $user->id) }}" method="POST">
                                                     @csrf @method('PATCH')
-                                                    <button type="submit" class="w-full text-xs font-black uppercase tracking-widest text-(--color-primary) py-2 hover:bg-(--color-primary)/5 rounded-xl transition-all">Approve Seller</button>
+                                                    <label class="block text-[10px] font-bold uppercase mb-1.5 opacity-60">System Role</label>
+                                                    <select name="role" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-2.5 rounded-xl border border-(--color-border) outline-none appearance-none cursor-pointer">
+                                                        <option value="buyer" {{ $user->role == 'buyer' ? 'selected' : '' }}>Buyer</option>
+                                                        <option value="seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller</option>
+                                                        <option value="buyer_seller" {{ $user->role == 'buyer_seller' ? 'selected' : '' }}>Buyer/Seller</option>
+                                                        <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                                    </select>
                                                 </form>
-                                            @endif
+                                                
+                                                <form action="{{ route('admin.users.updateStatus', $user->id) }}" method="POST">
+                                                    @csrf @method('PATCH')
+                                                    <label class="block text-[10px] font-bold uppercase mb-1.5 opacity-60">Account Status</label>
+                                                    <select name="status" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-2.5 rounded-xl border border-(--color-border) outline-none appearance-none cursor-pointer">
+                                                        <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Active</option>
+                                                        <option value="suspended" {{ $user->status == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                                                    </select>
+                                                </form>
+    
+                                                @if(in_array($user->role, ['seller', 'buyer_seller']) && (!$user->sellerProfile || !$user->sellerProfile->is_approved))
+                                                    <form action="{{ route('admin.users.approveSeller', $user->id) }}" method="POST" class="pt-2 border-t border-(--color-border)">
+                                                        @csrf @method('PATCH')
+                                                        <button type="submit" class="w-full text-xs font-black uppercase tracking-widest text-(--color-primary) py-2 hover:bg-(--color-primary)/5 rounded-xl transition-all">Approve Seller</button>
+                                                    </form>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @else
+                                    <span class="text-xs text-(--color-muted) font-medium italic select-none">Current Session</span>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -134,42 +143,49 @@
                                 {{ substr($user->full_name, 0, 1) }}
                             </div>
                             <div class="min-w-0">
-                                <p class="font-bold text-(--color-text) text-sm leading-tight truncate">{{ $user->full_name }}</p>
+                                <p class="font-bold text-(--color-text) text-sm leading-tight truncate">
+                                    {{ $user->full_name }}
+                                    @if($user->id === auth()->id())
+                                        <span class="ml-1 text-[8px] font-black uppercase tracking-tighter bg-(--color-text) text-(--color-bg) px-1 py-0.5 rounded">You</span>
+                                    @endif
+                                </p>
                                 <p class="text-[10px] text-(--color-muted) font-medium truncate">{{ $user->email }}</p>
                             </div>
                         </div>
                         
-                        <div class="relative">
-                            <button data-dropdown-toggle="user-dropdown-mobile-{{ $user->id }}" class="p-2 hover:bg-(--color-bg) rounded-xl transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-(--color-muted)"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-                            </button>
-                            <div id="user-dropdown-mobile-{{ $user->id }}" data-dropdown class="hidden absolute right-0 mt-2 w-64 bg-(--color-surface) border border-(--color-border) rounded-2xl shadow-2xl z-50 p-4 space-y-4">
-                                <form action="{{ route('admin.users.updateRole', $user->id) }}" method="POST">
-                                    @csrf @method('PATCH')
-                                    <label class="block text-[10px] font-black uppercase tracking-widest text-(--color-muted) mb-2">Change Role</label>
-                                    <select name="role" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-3 rounded-xl border border-(--color-border) outline-none">
-                                        <option value="buyer" {{ $user->role == 'buyer' ? 'selected' : '' }}>Buyer</option>
-                                        <option value="seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller</option>
-                                        <option value="buyer_seller" {{ $user->role == 'buyer_seller' ? 'selected' : '' }}>Buyer/Seller</option>
-                                        <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                    </select>
-                                </form>
-                                <form action="{{ route('admin.users.updateStatus', $user->id) }}" method="POST">
-                                    @csrf @method('PATCH')
-                                    <label class="block text-[10px] font-black uppercase tracking-widest text-(--color-muted) mb-2">Change Status</label>
-                                    <select name="status" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-3 rounded-xl border border-(--color-border) outline-none">
-                                        <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="suspended" {{ $user->status == 'suspended' ? 'selected' : '' }}>Suspended</option>
-                                    </select>
-                                </form>
-                                @if(in_array($user->role, ['seller', 'buyer_seller']) && (!$user->sellerProfile || !$user->sellerProfile->is_approved))
-                                    <form action="{{ route('admin.users.approveSeller', $user->id) }}" method="POST" class="pt-4 border-t border-(--color-border)">
+                        @if($user->id !== auth()->id())
+                            <div class="relative">
+                                <button data-dropdown-toggle="user-dropdown-mobile-{{ $user->id }}" class="p-2 hover:bg-(--color-bg) rounded-xl transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-(--color-muted)"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                </button>
+                                <div id="user-dropdown-mobile-{{ $user->id }}" data-dropdown class="hidden absolute right-0 mt-2 w-64 bg-(--color-surface) border border-(--color-border) rounded-2xl shadow-2xl z-50 p-4 space-y-4">
+                                    <form action="{{ route('admin.users.updateRole', $user->id) }}" method="POST">
                                         @csrf @method('PATCH')
-                                        <button type="submit" class="w-full bg-(--color-primary) text-white text-[10px] font-black uppercase tracking-widest py-3 rounded-xl shadow-lg">Approve Seller Profile</button>
+                                        <label class="block text-[10px] font-black uppercase tracking-widest text-(--color-muted) mb-2">Change Role</label>
+                                        <select name="role" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-3 rounded-xl border border-(--color-border) outline-none">
+                                            <option value="buyer" {{ $user->role == 'buyer' ? 'selected' : '' }}>Buyer</option>
+                                            <option value="seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller</option>
+                                            <option value="buyer_seller" {{ $user->role == 'buyer_seller' ? 'selected' : '' }}>Buyer/Seller</option>
+                                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                        </select>
                                     </form>
-                                @endif
+                                    <form action="{{ route('admin.users.updateStatus', $user->id) }}" method="POST">
+                                        @csrf @method('PATCH')
+                                        <label class="block text-[10px] font-black uppercase tracking-widest text-(--color-muted) mb-2">Change Status</label>
+                                        <select name="status" onchange="this.form.submit()" class="w-full text-xs font-bold bg-(--color-bg) p-3 rounded-xl border border-(--color-border) outline-none">
+                                            <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Active</option>
+                                            <option value="suspended" {{ $user->status == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                                        </select>
+                                    </form>
+                                    @if(in_array($user->role, ['seller', 'buyer_seller']) && (!$user->sellerProfile || !$user->sellerProfile->is_approved))
+                                        <form action="{{ route('admin.users.approveSeller', $user->id) }}" method="POST" class="pt-4 border-t border-(--color-border)">
+                                            @csrf @method('PATCH')
+                                            <button type="submit" class="w-full bg-(--color-primary) text-white text-[10px] font-black uppercase tracking-widest py-3 rounded-xl shadow-lg">Approve Seller Profile</button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
 
                     <div class="flex items-center gap-2 pt-1">
