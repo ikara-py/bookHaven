@@ -55,7 +55,13 @@ class AdminService
             'total_orders'    => Order::count(),
             'total_revenue'   => Order::where('status','completed')->sum('total_amount'),
             'pending_orders'  => Order::where('status','pending')->count(),
-            'pending_sellers' => SellerProfile::where('is_approved', false)->count(),
+            'pending_sellers' => User::whereIn('role', ['seller', 'buyer_seller'])
+                                ->where(function($q) {
+                                    $q->whereDoesntHave('sellerProfile')
+                                      ->orWhereHas('sellerProfile', function($sq) {
+                                          $sq->where('is_approved', false);
+                                      });
+                                })->count(),
         ];
     }
 
