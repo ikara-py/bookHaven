@@ -33,7 +33,27 @@ class OrderService
                 ]);
             }
  
-            $total = $cart->items->sum(fn($i) => $i->price * $i->quantity);
+            $subtotal = $cart->items->sum(fn($i) => $i->price * $i->quantity);
+            $discount = 0;
+            $couponId = null;
+
+            if (session()->has('coupon')) {
+                $couponData = session('coupon');
+                $coupon = \App\Models\Coupon::find($couponData['id']);
+                
+                if ($coupon && $coupon->is_active && $subtotal >= $coupon->min_order_amount) {
+                    if ($coupon->type === 'percent') {
+                        $discount = ($subtotal * $coupon->value) / 100;
+                    } else {
+                        $discount = min($subtotal, $coupon->value);
+                    }
+                    $couponId = $coupon->id;
+                    $coupon->increment('used_count');
+                }
+                session()->forget('coupon');
+            }
+
+            $total = max(0, $subtotal - $discount);
             $orderStatus = 'pending';
 
             $order = Order::create([
@@ -41,6 +61,8 @@ class OrderService
                 'total_amount'     => $total,
                 'status'           => $orderStatus,
                 'shipping_address' => $data['shipping_address'],
+                'coupon_id'        => $couponId,
+                'discount_amount'  => $discount,
             ]);
  
             foreach ($cart->items as $item) {
@@ -97,7 +119,7 @@ class OrderService
             ];
         }
 
-        return CheckoutSession::create([
+        $sessionData = [
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
             'mode' => 'payment',
@@ -106,7 +128,19 @@ class OrderService
             'metadata' => [
                 'order_id' => $order->id,
             ],
-        ]);
+        ];
+
+        if ($order->discount_amount > 0) {
+            $stripeCoupon = \Stripe\Coupon::create([
+                'amount_off' => (int)($order->discount_amount * 100),
+                'currency' => 'usd',
+                'duration' => 'once',
+                'name' => 'Order Discount',
+            ]);
+            $sessionData['discounts'] = [['coupon' => $stripeCoupon->id]];
+        }
+
+        return CheckoutSession::create($sessionData);
     }
  
     public function cancelOrder(Order $order): Order
