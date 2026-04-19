@@ -34,6 +34,28 @@ class CartService{
     }
 
     public function total($userId){
+        $subtotal = $this->getCart($userId)->items->sum(fn($i) => $i->price * $i->quantity);
+        $discount = $this->getDiscount($userId, $subtotal);
+        return max(0, $subtotal - $discount);
+    }
+
+    public function getSubtotal($userId){
         return $this->getCart($userId)->items->sum(fn($i) => $i->price * $i->quantity);
+    }
+
+    public function getDiscount($userId, $subtotal){
+        $couponData = session('coupon');
+        if(!$couponData) return 0;
+
+        if($subtotal < $couponData['min_order_amount']){
+            session()->forget('coupon');
+            return 0;
+        }
+
+        if($couponData['type'] === 'percent'){
+            return ($subtotal * $couponData['value']) / 100;
+        }
+
+        return min($subtotal, $couponData['value']);
     }
 }

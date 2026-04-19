@@ -6,6 +6,7 @@ use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\SellerProfile;
 use Illuminate\Database\Seeder;
 
 class StoreSeeder extends Seeder
@@ -16,6 +17,14 @@ class StoreSeeder extends Seeder
         $authors = Author::factory()->count(15)->create();
 
         $sellers = User::factory()->count(3)->create(['role' => 'seller']);
+        
+        foreach ($sellers as $seller) {
+            SellerProfile::create([
+                'user_id' => $seller->id,
+                'store_name' => $seller->full_name . "'s Collection",
+                'is_approved' => true
+            ]);
+        }
         
         User::factory()->count(10)->create(['role' => 'buyer']);
 

@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Buyer\{AuthorController, BookController, CartController, CategoryController, OrderController, ReviewController, WishlistController, DownloadController};
 use App\Http\Controllers\Seller\{SellerBookController, SellerOrderController};
-use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController, AdminReviewController, AdminCategoryController};
+use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController, AdminReviewController, AdminCategoryController, AdminCouponController};
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StripeWebhookController;
 
@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/cart/items',[CartController::class, 'addItem'])->name('cart.add');
         Route::delete('/cart/items/{itemId}',[CartController::class, 'removeItem'])->name('cart.remove');
         Route::delete('/cart',[CartController::class, 'clear'])->name('cart.clear');
+        Route::post('/cart/coupon',[CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
+        Route::delete('/cart/coupon',[CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
  
         Route::get('/orders',[OrderController::class, 'index'])->name('orders.index');
         Route::post('/orders',[OrderController::class, 'store'])->name('orders.store');
@@ -72,5 +74,6 @@ Route::middleware('auth')->group(function () {
         Route::patch('orders/{order}/status',[AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('reviews/{review}',[AdminReviewController::class, 'destroy'])->name('reviews.destroy');
         Route::resource('categories',AdminCategoryController::class)->except(['create','show']);
+        Route::resource('coupons', AdminCouponController::class)->except(['create','show', 'edit']);
     });
 });
