@@ -45,7 +45,7 @@
                 </thead>
                 <tbody class="divide-y divide-(--color-border)">
                     @forelse($books as $book)
-                        <tr class="hover:bg-(--color-bg)/20 transition-colors">
+                        <tr class="hover:bg-(--color-bg)/20 transition-colors {{ $book->trashed() ? 'opacity-70 bg-red-500/5' : '' }}">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-16 bg-(--color-bg) rounded-lg flex items-center justify-center border border-(--color-border) overflow-hidden shrink-0">
@@ -69,9 +69,13 @@
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
                                     <p class="font-bold text-(--color-text)">${{ number_format($book->price, 2) }}</p>
-                                    <p class="text-xs {{ $book->stock > 0 ? 'text-green-600' : 'text-red-600' }} font-bold">
-                                        {{ $book->stock > 0 ? $book->stock . ' In Stock' : 'Out of Stock' }}
-                                    </p>
+                                    @if($book->trashed())
+                                        <p class="text-[10px] text-red-600 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20 w-max font-black tracking-widest uppercase">Deleted</p>
+                                    @else
+                                        <p class="text-xs {{ $book->stock > 0 ? 'text-green-600' : 'text-red-600' }} font-bold">
+                                            {{ $book->stock > 0 ? $book->stock . ' In Stock' : 'Out of Stock' }}
+                                        </p>
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-6 py-4">
@@ -94,9 +98,9 @@
                                         </a>
                                         <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST" onsubmit="return confirm('Delete this book permanently?');">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-red-600 hover:bg-red-500/10 transition-colors">
+                                            <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold {{ $book->trashed() ? 'text-(--color-muted) cursor-not-allowed' : 'text-red-600 hover:bg-red-500/10' }} transition-colors" {{ $book->trashed() ? 'disabled' : '' }}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                                Delete Book
+                                                {{ $book->trashed() ? 'Deleted' : 'Delete Book' }}
                                             </button>
                                         </form>
                                     </div>
@@ -114,7 +118,7 @@
 
         <div class="lg:hidden divide-y divide-(--color-border)">
             @forelse($books as $book)
-                <div class="p-5 space-y-4">
+                <div class="p-5 space-y-4 {{ $book->trashed() ? 'opacity-70 bg-red-500/5' : '' }}">
                     <div class="flex gap-4">
                         <div class="w-20 h-28 bg-(--color-bg) rounded-xl flex items-center justify-center border border-(--color-border) overflow-hidden shrink-0 shadow-sm">
                             @if($book->cover_url)
@@ -133,9 +137,11 @@
                                     <div id="book-dropdown-mobile-{{ $book->id }}" data-dropdown class="hidden absolute right-0 mt-2 w-48 bg-(--color-surface) border border-(--color-border) rounded-2xl shadow-2xl z-50 overflow-hidden">
                                         <a href="{{ route('books.show', $book->id) }}" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-(--color-text) border-b border-(--color-border)">View Listing</a>
                                         <a href="{{ route('admin.books.edit', $book->id) }}" class="flex items-center gap-3 px-4 py-3 text-xs font-bold text-(--color-primary) border-b border-(--color-border)">Edit Details</a>
-                                        <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST">
+                                        <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST" onsubmit="return confirm('Delete this book permanently?');">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="w-full text-left px-4 py-3 text-xs font-bold text-red-600">Delete Book</button>
+                                            <button type="submit" class="w-full text-left px-4 py-3 text-xs font-bold {{ $book->trashed() ? 'text-(--color-muted) cursor-not-allowed' : 'text-red-600' }}" {{ $book->trashed() ? 'disabled' : '' }}>
+                                                {{ $book->trashed() ? 'Deleted' : 'Delete Book' }}
+                                            </button>
                                         </form>
                                     </div>
                                 </div>
@@ -149,7 +155,11 @@
                                 </div>
                                 <div class="flex justify-between items-center text-xs">
                                     <span class="text-(--color-muted)">Stock</span>
-                                    <span class="font-bold {{ $book->stock > 0 ? 'text-green-600' : 'text-red-600' }}">{{ $book->stock }} units</span>
+                                    @if($book->trashed())
+                                        <span class="font-black text-red-600 uppercase tracking-widest text-[10px] bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">Deleted</span>
+                                    @else
+                                        <span class="font-bold {{ $book->stock > 0 ? 'text-green-600' : 'text-red-600' }}">{{ $book->stock }} units</span>
+                                    @endif
                                 </div>
                             </div>
                         </div>

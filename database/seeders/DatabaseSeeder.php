@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             StoreSeeder::class,
             ReviewSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 

@@ -19,7 +19,7 @@ class AdminBookController extends Controller
     ){}
 
     public function index(Request $request){
-        $query = Book::with('seller', 'category', 'author');
+        $query = Book::with('seller', 'category', 'author')->withTrashed();
 
         if ($request->filled('search')) {
             $term = $request->search;
