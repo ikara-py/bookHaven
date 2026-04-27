@@ -33,6 +33,7 @@ return new class extends Migration
             $table->enum('type', ['physical', 'digital'])->default('physical');
             $table->enum('status', ['active', 'inactive', 'sold', 'rejected'])->default('active');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
