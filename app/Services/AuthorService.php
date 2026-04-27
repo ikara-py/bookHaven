@@ -28,6 +28,7 @@ class AuthorService
 
     public function delete(Author $author): ?bool
     {
+        $author->books()->delete();
         return $author->delete();
     }
 }

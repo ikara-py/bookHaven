@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->date('date_of_death')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
