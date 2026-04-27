@@ -28,6 +28,9 @@ class ReviewController extends Controller
             ]
         );
 
+        $newAverage = $book->reviews()->avg('rating');
+        $book->update(['rating' => $newAverage ?? 0]);
+
         return back()->with('success', 'Your review has been submitted successfully!');
     }
 }

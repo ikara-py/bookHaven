@@ -28,6 +28,8 @@ class ReviewSeeder extends Seeder
                     'user_id' => $user->id,
                 ]);
             }
+            
+            $book->update(['rating' => $book->reviews()->avg('rating') ?? 0]);
         }
     }
 }
