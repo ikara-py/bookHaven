@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Buyer\{AuthorController, BookController, CartController, CategoryController, OrderController, ReviewController, WishlistController, DownloadController};
 use App\Http\Controllers\Seller\{SellerBookController, SellerOrderController};
-use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController, AdminReviewController, AdminCategoryController, AdminCouponController};
+use App\Http\Controllers\Admin\{AdminBookController, AdminUserController, AdminOrderController, AdminReviewController, AdminCategoryController, AdminCouponController, AdminAuthorController};
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StripeWebhookController;
 
@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('orders/{order}/status',[AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('reviews/{review}',[AdminReviewController::class, 'destroy'])->name('reviews.destroy');
         Route::resource('categories',AdminCategoryController::class)->except(['create','show']);
+        Route::resource('authors', AdminAuthorController::class)->except(['create', 'show']);
         Route::resource('coupons', AdminCouponController::class)->except(['create','show', 'edit']);
     });
 });

@@ -109,6 +109,11 @@
                         <span class="font-bold text-sm">Manage Categories</span>
                         <span class="text-[10px] text-white/40 uppercase tracking-widest font-black">Taxonomy</span>
                     </a>
+                    <a href="{{ route('admin.authors.index') }}" class="flex flex-col p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="mb-2 text-(--color-primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                        <span class="font-bold text-sm">Manage Authors</span>
+                        <span class="text-[10px] text-white/40 uppercase tracking-widest font-black">Writers</span>
+                    </a>
                     <a href="{{ route('admin.coupons.index') }}" class="flex flex-col p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="mb-2 text-(--color-primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                         <span class="font-bold text-sm">Manage Coupons</span>
