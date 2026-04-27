@@ -76,28 +76,30 @@
             </div>
 
             <div class="pt-4 md:pt-8 space-y-6">
-                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
-                    <div class="flex flex-col gap-1.5 w-full md:w-auto">
-                        <span class="text-[10px] font-black uppercase text-(--color-muted) tracking-widest ml-1">Select Quantity</span>
-                        <div class="flex items-center bg-(--color-accent)/10 border border-(--color-border) rounded-2xl p-1 shadow-inner h-14 w-full md:w-[150px]">
-                            <button type="button" onclick="decrementQty()" class="flex-1 md:w-12 h-full flex items-center justify-center text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-surface) rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" id="qty-minus" disabled>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
-                            </button>
-                            <span id="qty-display" class="w-12 text-center font-black text-lg tabular-nums">1</span>
-                            <button type="button" onclick="incrementQty()" class="flex-1 md:w-12 h-full flex items-center justify-center text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-surface) rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" id="qty-plus" @if($book->stock <= 1) disabled @endif>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                            </button>
+                @if(!(auth()->check() && auth()->user()->isAdmin()))
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <div class="flex flex-col gap-1.5 w-full md:w-auto">
+                            <span class="text-[10px] font-black uppercase text-(--color-muted) tracking-widest ml-1">Select Quantity</span>
+                            <div class="flex items-center bg-(--color-accent)/10 border border-(--color-border) rounded-2xl p-1 shadow-inner h-14 w-full md:w-[150px]">
+                                <button type="button" onclick="decrementQty()" class="flex-1 md:w-12 h-full flex items-center justify-center text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-surface) rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" id="qty-minus" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+                                </button>
+                                <span id="qty-display" class="w-12 text-center font-black text-lg tabular-nums">1</span>
+                                <button type="button" onclick="incrementQty()" class="flex-1 md:w-12 h-full flex items-center justify-center text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-surface) rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" id="qty-plus" @if($book->stock <= 1) disabled @endif>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="grow pt-0 md:pt-4">
+                            <div class="flex items-center gap-2 text-xs font-bold @if($book->stock > 5) text-green-600 @else text-amber-600 @endif mb-1">
+                                <div class="w-2 h-2 rounded-full bg-current animate-pulse"></div>
+                                <span>{{ $book->stock > 0 ? "In Stock ({$book->stock})" : 'Sold Out' }}</span>
+                            </div>
+                            <p class="text-[10px] text-(--color-muted) uppercase tracking-tighter">Ready for immediate priority shipping</p>
                         </div>
                     </div>
-                    
-                    <div class="grow pt-0 md:pt-4">
-                        <div class="flex items-center gap-2 text-xs font-bold @if($book->stock > 5) text-green-600 @else text-amber-600 @endif mb-1">
-                            <div class="w-2 h-2 rounded-full bg-current animate-pulse"></div>
-                            <span>{{ $book->stock > 0 ? "In Stock ({$book->stock})" : 'Sold Out' }}</span>
-                        </div>
-                        <p class="text-[10px] text-(--color-muted) uppercase tracking-tighter">Ready for immediate priority shipping</p>
-                    </div>
-                </div>
+                @endif
 
                 @if(auth()->check() && auth()->user()->isAdmin())
                     <div class="flex flex-col sm:flex-row gap-4 w-full">
