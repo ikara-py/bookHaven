@@ -43,6 +43,20 @@
                            class="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-4 py-3 focus:outline-none focus:border-(--color-primary) transition-all">
                     @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-(--color-muted) mb-2">Gender</label>
+                    <select name="gender" class="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-4 py-3 focus:outline-none focus:border-(--color-primary) transition-all">
+                        <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Female</option>
+                    </select>
+                    @error('gender') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-black uppercase tracking-widest text-(--color-muted) mb-2">Date of Birth</label>
+                    <input type="date" name="date_of_birth" value="{{ old('date_of_birth', $user->date_of_birth?->format('Y-m-d')) }}" 
+                           class="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-4 py-3 focus:outline-none focus:border-(--color-primary) transition-all">
+                    @error('date_of_birth') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-black uppercase tracking-widest text-(--color-muted) mb-2">Bio / About You</label>
                     <textarea name="bio" rows="3" 

@@ -27,6 +27,8 @@ class ProfileController extends Controller
             'country' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string', 'max:500', new Clean()],
             'bio' => ['nullable', 'string', 'max:1000', new Clean()],
+            'gender' => ['required', 'in:male,female'],
+            'date_of_birth' => ['required', 'date', 'before:today'],
         ];
 
         if ($request->filled('password') && $request->filled('password_confirmation')) {
@@ -44,6 +46,8 @@ class ProfileController extends Controller
             'full_name' => $validated['full_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? $user->phone,
+            'gender' => $validated['gender'],
+            'date_of_birth' => $validated['date_of_birth'],
             'city' => $validated['city'] ?? $user->city,
             'country' => $validated['country'] ?? $user->country,
             'address' => $validated['address'] ?? $user->address,

@@ -16,7 +16,13 @@ class AuthService{
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'] ?? 'buyer',
+            'gender' => $data['gender'],
             'phone' => $data['phone'] ?? null,
+            'city' => $data['city'] ?? null,
+            'country' => $data['country'] ?? null,
+            'address' => $data['address'] ?? null,
+            'date_of_birth' => $data['date_of_birth'] ?? null,
+            'bio' => $data['bio'] ?? null,
         ]);
 
         Cart::create(['user_id' => $user->id]);
